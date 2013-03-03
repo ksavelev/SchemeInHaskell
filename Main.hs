@@ -65,10 +65,14 @@ parseOct = do try (string "#o")
               x <- many1 octDigit
               (return . Number . fst . head . readOct) x
 
+binStr2Number :: Integer -> String -> Integer
+binStr2Number accum "" = accum
+binStr2Number accum (x:xs) = binStr2Number (accum * 2 + (if x == '0' then 0 else 1)) xs
+
 parseBin :: Parser LispVal
 parseBin = do try (string "#b")
               x <- many1 (oneOf "10")
-              (return . Number . read) x
+              (return . Number . binStr2Number) x
 
 parseNumber :: Parser LispVal
 parseNumber = do num <- parseDigital1 <|> parseDigital2 <|> parseHex <|> parseOct <|> parseBin
