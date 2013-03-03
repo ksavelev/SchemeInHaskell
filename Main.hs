@@ -45,8 +45,25 @@ parseAtom = do first <- letter <|> symbol
                let atom = first: rest
                return $ Atom atom
 
+parseDigital1 :: Parser LispVal
+parseDigital1 = do x <- many1 digit
+                   (return . Number . read) x
+
+parseDigital2 :: Parser LispVal
+parseDigital2 = undefined
+
+parseHex :: Parser LispVal
+parseHex = undefined
+
+parseOct :: Parser LispVal
+parseOct = undefined
+
+parseBin :: Parser LispVal
+parseBin = undefined
+
 parseNumber :: Parser LispVal
-parseNumber = (many1 digit) >>= (return . read) >>= (return . Number)
+parseNumber = do num <- parseDigital1 <|> parseDigital2 <|> parseHex <|> parseOct <|> parseBin
+                 return num
 
 parseExpr :: Parser LispVal
 parseExpr = parseAtom <|> parseString <|> parseNumber <|> parseBool
