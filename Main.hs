@@ -18,8 +18,13 @@ spaces = skipMany1 space
 
 escapedChars :: Parser Char
 escapedChars = do char '\\'
-                  x <- oneOf "\\\""
-                  return x
+                  x <- oneOf "\\\"\n\r\t"
+                  return $ case x of
+                           '\\' -> x
+                           '"'  -> x
+                           'n'  -> '\n'
+                           'r'  -> '\r'
+                           't'  -> '\t'
 
 parseString :: Parser LispVal
 parseString = do char '"'
