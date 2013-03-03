@@ -65,6 +65,7 @@ parseOct = do try (string "#o")
               x <- many1 octDigit
               (return . Number . fst . head . readOct) x
 
+bin2Num :: String -> Integer
 bin2Num = binStr2Number 0
 
 binStr2Number :: Integer -> String -> Integer
