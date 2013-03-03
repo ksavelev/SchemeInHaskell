@@ -2,6 +2,7 @@ module Main where
 import Text.ParserCombinators.Parsec hiding (spaces)
 import System.Environment
 import Control.Monad
+import Numeric
 
 data LispVal = Atom String
     | List [LispVal]
@@ -55,13 +56,19 @@ parseDigital2 = do try (string "#d")
                    (return . Number . read) x
 
 parseHex :: Parser LispVal
-parseHex = undefined
+parseHex = do try (string "#x")
+              x <- many1 hexDigit
+              (return . Number . fst . head . readHex) x
 
 parseOct :: Parser LispVal
-parseOct = undefined
+parseOct = do try (string "#o")
+              x <- many1 octDigit
+              (return . Number . fst . head . readOct) x
 
 parseBin :: Parser LispVal
-parseBin = undefined
+parseBin = do try (string "#b")
+              x <- many1 (oneOf "10")
+              (return . Number . read) x
 
 parseNumber :: Parser LispVal
 parseNumber = do num <- parseDigital1 <|> parseDigital2 <|> parseHex <|> parseOct <|> parseBin
