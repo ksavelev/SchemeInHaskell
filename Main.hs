@@ -50,7 +50,9 @@ parseDigital1 = do x <- many1 digit
                    (return . Number . read) x
 
 parseDigital2 :: Parser LispVal
-parseDigital2 = undefined
+parseDigital2 = do try (string "#d")
+                   x <- many1 digit
+                   (return . Number . read) x
 
 parseHex :: Parser LispVal
 parseHex = undefined
