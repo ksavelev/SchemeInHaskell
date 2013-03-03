@@ -11,7 +11,7 @@ data LispVal = Atom String
     | Bool Bool
 
 symbol :: Parser Char
-symbol = oneOf "!#$%&|*+-/:<=>?@^_~"
+symbol = oneOf "!$%&|*+-/:<=>?@^_~"
 
 spaces :: Parser ()
 spaces = skipMany1 space
@@ -32,20 +32,24 @@ parseString = do char '"'
                  char '"'
                  return $ String x
 
+parseBool :: Parser LispVal
+parseBool = do string "#"
+               x <- oneOf "tf"
+               return $ case x of
+                          't' -> Bool True
+                          'f' -> Bool False
+
 parseAtom :: Parser LispVal
 parseAtom = do first <- letter <|> symbol
                rest <- many (letter <|> digit <|> symbol)
                let atom = first: rest
-               return $ case atom of
-                          "#t" -> Bool True
-                          "#f" -> Bool False
-                          _ -> Atom atom
+               return $ Atom atom
 
 parseNumber :: Parser LispVal
 parseNumber = (many1 digit) >>= (return . read) >>= (return . Number)
 
 parseExpr :: Parser LispVal
-parseExpr = parseAtom <|> parseString <|> parseNumber
+parseExpr = parseAtom <|> parseString <|> parseNumber <|> parseBool
 
 readExpr :: String -> String
 readExpr input = case parse parseExpr "lisp" input of
