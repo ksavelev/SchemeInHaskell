@@ -4,6 +4,7 @@ import System.Environment
 import Control.Monad()
 import Numeric
 
+-- data
 data LispVal = Atom String
     | List [LispVal]
     | DottedList [LispVal] LispVal
